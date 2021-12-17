@@ -36,20 +36,19 @@ wf.connect(fsl_anat, 'out_dir', other_node, 'fsl_anat_results')
 
 ### `OptionalFSLAnat`
 
-This interface enables connecting either an nii image or an existing fsl_anat results directory to the `in_data` parameter. This intended use-case is so that a workflow will run `fsl_anat` if only a T1 image is supplied, but will skip running `fsl_anat` if an existing results directory is supplied, for example:
+This interface enables connecting either a nii image or an existing fsl_anat results directory to the `in_data` parameter. The intended use-case is so that a workflow will run `fsl_anat` if a T1 image is supplied as `in_data`, but will skip running `fsl_anat` if an existing results directory is supplied as `in_data`, for example, consider the following workflow:
 
 ```python
 from nipype import IdentityInterface, Node, Workflow
 from nipype_fsl_anat import OptionalFSLAnat
 
 def create_workflow() -> Workflow:
-    wf = Workflow(...)  # defined elsewhere
+    wf = Workflow(name='my_workflow')
 
     inputnode = Node(IdentityInterface(field=['anat_data']), name='inputnode')
 
     fsl_anat = Node(OptionalFSLAnat(), name='fsl_anat')
     wf.connect(inputnode, 'anat_data', fsl_anat, 'in_data')
-
 
     outputnode = Node(IdentityInterface(field=['anat_results']), name='outputnode')
     wf.connect(fsl_anat, 'out_dir', other_node, 'anat_results')
@@ -57,17 +56,20 @@ def create_workflow() -> Workflow:
     return wf
 ```
 
-While the workflow is trivially wrapping `OptionalFSLAnat`, it demonstrates the following: One can pass a simple T1 nii image to `wf.inputs.inputnode.anat_data`, in which case the workflow will run `fsl_anat`, **or** one can pass an existing `fsl_anat` results directory to `wf.inputs.inputnode.anat_data` (the same input field!) in which case (unless `clobber == True`) the workflow will pass the inputs through the node without running `fsl_anat` and instead will forward the results that were passed to it.
+While the workflow is trivially wrapping `OptionalFSLAnat`, it demonstrates the following. One can now pass either:
+
+- A T1 nii image to `wf.inputs.inputnode.anat_data`, in which case the workflow will run `fsl_anat`, or
+- An existing `fsl_anat` results directory to `wf.inputs.inputnode.anat_data` (the same input field!) in which case (unless `clobber == True`) the workflow will pass the inputs through the node without running `fsl_anat` and instead will forward the results that were passed to it.
 
 ## Details
 
 This package exports two interface:
 
-1. The `FSLAnat` interface. This interface's parameters mirror that of the underlying `fsl_anat` command line tool, and whose `out_dir` (-o) parameter correctly points at the fsl_anat-generated output directory.
+1. The `FSLAnat` interface. This interface's parameters mirror that of the underlying `fsl_anat` command line tool, and has been wired so that the `out_dir` (-o) parameter correctly points to the `fsl_anat`-generated output directory.
 
 2. The `OptionalFSLAnat` interface. This interface is, in most aspects, exactly the same as `FSLAnat` with the following difference:
 
-   `OptionalFSLAnat` has a single input source, `in_data` (cf. `FSLAnat` which has `in_file` (-i) and `in_dir` (-d)), where `in_data` can either be a file (`.nii.gz`) or a directory. Depending on the type of input data (file/directory) and the value of `clobber` (True/False/undefined) we have the following behaviours:
+   `OptionalFSLAnat` has a single input source, `in_data` (cf. `FSLAnat` which has `in_file` (`-i`) and `in_dir` (`-d`)), where `in_data` can either be a file (`.nii.gz`) or a directory. Depending on the type of input data (file/directory) and the value of `clobber` (True/False/undefined) we have the following behaviours:
 
    - **`in_data = file` + `clobber = False | undefined`**
 
