@@ -63,7 +63,7 @@ While the workflow is trivially wrapping `OptionalFSLAnat`, it demonstrates the 
 
 ## Details
 
-This package exports two interface:
+This package exports two interfaces:
 
 1. The `FSLAnat` interface. This interface's parameters mirror that of the underlying `fsl_anat` command line tool, and has been wired so that the `out_dir` (-o) parameter correctly points to the `fsl_anat`-generated output directory.
 
@@ -81,7 +81,7 @@ This package exports two interface:
 
    - **`in_data = directory` + `clobber = False | undefined`**
 
-     `fsl_anat` execution is **SKIPPED**! Furthermore, if (in python) we have `fslanat = FSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified) and in his case **this node/interface becomes a no-op/pass-through node**.
+     `fsl_anat` execution is **SKIPPED**! Furthermore, if (in python) we have `fslanat = FSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified) and in this case **this node/interface becomes a no-op/pass-through node**.
 
    - **`in_data = directory` + `clobber = True`**
 
