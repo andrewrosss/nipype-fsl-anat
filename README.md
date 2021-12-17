@@ -10,7 +10,7 @@ pip install nipype-fsl-anat
 
 ## Usage
 
-### The standard interface
+### `FSLAnat` (Interface)
 
 ```python
 from nipype import Node, Workflow
@@ -34,7 +34,7 @@ other_node = Node(..., name='...')
 wf.connect(fsl_anat, 'out_dir', other_node, 'fsl_anat_results')
 ```
 
-### `OptionalFSLAnat`
+### `OptionalFSLAnat` (Interface)
 
 This interface enables connecting either a nii image or an existing fsl_anat results directory to the `in_data` parameter. The intended use-case is so that a workflow will run `fsl_anat` if a T1 image is supplied as `in_data`, but will skip running `fsl_anat` if an existing results directory is supplied as `in_data`, for example, consider the following workflow:
 
