@@ -86,3 +86,14 @@ This package exports two interfaces:
    - **`in_data = directory` + `clobber = True`**
 
      Equivalent to `fsl_anat -d <in_data> --clobber ...`. Furthermore, if (in python) we have `fslanat = FSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified).
+
+## Contributing
+
+1. Have or install a recent version of `poetry` (version >= 1.1)
+1. Fork the repo
+1. Setup a virtual environment (however you prefer)
+1. Run `poetry install`
+1. Run `pre-commit install`
+1. Add your changes
+1. Commit your changes + push to your fork
+1. Open a PR
