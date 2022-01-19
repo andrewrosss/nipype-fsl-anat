@@ -41,6 +41,28 @@ __version__ = "0.1.0"
 
 NII_FILE_REGEXP = re.compile(r".*\.nii(\.gz)?$")
 FSL_ANAT_DIR_REGEXP = re.compile(r".*\.anat$")
+FSL_ANAT_OUTPUTS = {
+    "mni_to_t1_nonlin_field": "MNI_to_T1_nonlin_field.nii.gz",
+    "t1": "T1.nii.gz",
+    "t1_biascorr": "T1_biascorr.nii.gz",
+    "t1_biascorr_brain": "T1_biascorr_brain.nii.gz",
+    "t1_biascorr_brain_mask": "T1_biascorr_brain_mask.nii.gz",
+    "t1_fast_bias": "T1_fast_bias.nii.gz",
+    "t1_fast_pve_0": "T1_fast_pve_0.nii.gz",
+    "t1_fast_pve_1": "T1_fast_pve_1.nii.gz",
+    "t1_fast_pve_2": "T1_fast_pve_2.nii.gz",
+    "t1_fast_pveseg": "T1_fast_pveseg.nii.gz",
+    "t1_fast_seg": "T1_fast_seg.nii.gz",
+    "t1_subcort_seg": "T1_subcort_seg.nii.gz",
+    "t1_to_MNI_lin_mat": "T1_to_MNI_lin.mat",
+    "t1_to_MNI_lin": "T1_to_MNI_lin.nii.gz",
+    "t1_to_MNI_nonlin": "T1_to_MNI_nonlin.nii.gz",
+    "t1_to_MNI_nonlin_coeff": "T1_to_MNI_nonlin_coeff.nii.gz",
+    "t1_to_MNI_nonlin_field": "T1_to_MNI_nonlin_field.nii.gz",
+    "t1_to_MNI_nonlin_jac": "T1_to_MNI_nonlin_jac.nii.gz",
+    "lesionmask": "lesionmask.nii.gz",
+    "lesionmaskinv": "lesionmaskinv.nii.gz",
+}
 
 
 class FSLAnatInputSpecBase(fsl.base.FSLCommandInputSpec):
@@ -152,7 +174,21 @@ class FSLAnatInputSpec(FSLAnatInputSpecBase):
     )
 
 
-class FSLAnatOutputSpec(base.TraitedSpec):
+class FSLAnatOutputSpecMeta(base.traits.MetaHasTraits):
+    def __new__(cls, name, bases, dct):
+        for outputname in FSL_ANAT_OUTPUTS.keys():
+            dct[outputname] = base.traits.File()
+        return super().__new__(cls, name, bases, dct)
+
+
+class FSLAnatOutputSpec(base.TraitedSpec, metaclass=FSLAnatOutputSpecMeta):
+    """See the dict `FSL_ANAT_OUTPUTS` for which traits/files are
+    available as outputs from this interface.
+
+    The traits are injected into this class programmatically via
+    the metaclass `FSLAnatOutputSpecMeta`
+    """
+
     out_dir = base.traits.Directory(
         desc="basename of directory for output (default is input image "
         "basename followed by .anat)",
@@ -166,7 +202,13 @@ class FSLAnat(fsl.base.FSLCommand):
 
     def _list_outputs(self):
         outputs = self.output_spec().get()
-        outputs["out_dir"] = self._get_out_dir()
+
+        out_dir = self._get_out_dir()
+        outputs["out_dir"] = out_dir
+
+        for outputname, filename in FSL_ANAT_OUTPUTS.items():
+            outputs[outputname] = out_dir / filename
+
         return outputs
 
     def _gen_filename(self, name: str) -> Path | None:
@@ -242,10 +284,12 @@ class OptionalFSLAnat(base.BaseInterface):
         if is_fsl_anat_dir and not (isdefined(clobber) and clobber):
             self._log_skipping_fsl_anat_execution()
             self._fsl_anat_outputs = {"out_dir": in_data}
+            for outputname, filename in FSL_ANAT_OUTPUTS.items():
+                self._fsl_anat_outputs[outputname] = in_data / filename
             return runtime
 
         # at this point we know we should execute fsl_anat (the interface), we
-        # just need to know if its of the form 'fsl_anat -i ...' or 'fsl_anat -d ...'
+        # just need to know if it's of the form 'fsl_anat -i ...' or 'fsl_anat -d ...'
         if is_nii_file:
             inputs["in_file"] = in_data
         elif is_fsl_anat_dir:
