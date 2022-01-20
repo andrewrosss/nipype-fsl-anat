@@ -41,7 +41,7 @@ __version__ = "0.1.0"
 
 NII_FILE_REGEXP = re.compile(r".*\.nii(\.gz)?$")
 FSL_ANAT_DIR_REGEXP = re.compile(r".*\.anat$")
-FSL_ANAT_OUTPUTS = {
+FSL_ANAT_OUTPUT_FILENAMES = {
     "mni152_t1_2mm_brain_mask_dil1": "MNI152_T1_2mm_brain_mask_dil1.nii.gz",
     "mni_to_t1_nonlin_field": "MNI_to_T1_nonlin_field.nii.gz",
     "t1": "T1.nii.gz",
@@ -194,13 +194,13 @@ class FSLAnatInputSpec(FSLAnatInputSpecBase):
 
 class FSLAnatOutputSpecMeta(base.traits.MetaHasTraits):
     def __new__(cls, name, bases, dct):
-        for outputname in FSL_ANAT_OUTPUTS.keys():
+        for outputname in FSL_ANAT_OUTPUT_FILENAMES.keys():
             dct[outputname] = base.traits.File()
         return super().__new__(cls, name, bases, dct)
 
 
 class FSLAnatOutputSpec(base.TraitedSpec, metaclass=FSLAnatOutputSpecMeta):
-    """See the dict `FSL_ANAT_OUTPUTS` for which traits/files are
+    """See the dict `FSL_ANAT_OUTPUT_FILENAMES` for which traits/files are
     available as outputs from this interface.
 
     The traits are injected into this class programmatically via
@@ -224,7 +224,7 @@ class FSLAnat(fsl.base.FSLCommand):
         out_dir = self._get_out_dir()
         outputs["out_dir"] = out_dir
 
-        for outputname, filename in FSL_ANAT_OUTPUTS.items():
+        for outputname, filename in FSL_ANAT_OUTPUT_FILENAMES.items():
             outputs[outputname] = out_dir / filename
 
         return outputs
@@ -302,7 +302,7 @@ class OptionalFSLAnat(base.BaseInterface):
         if is_fsl_anat_dir and not (isdefined(clobber) and clobber):
             self._log_skipping_fsl_anat_execution()
             self._fsl_anat_outputs = {"out_dir": in_data}
-            for outputname, filename in FSL_ANAT_OUTPUTS.items():
+            for outputname, filename in FSL_ANAT_OUTPUT_FILENAMES.items():
                 self._fsl_anat_outputs[outputname] = in_data / filename
             return runtime
 
