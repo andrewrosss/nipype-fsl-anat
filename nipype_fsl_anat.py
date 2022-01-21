@@ -87,7 +87,7 @@ class FSLAnatInputSpecBase(fsl.base.FSLCommandInputSpec):
     clobber = base.traits.Bool(
         default_value=False,
         argstr="--clobber",
-        desc="f .anat directory exist (as specified by -o or default from -i) "
+        desc="if .anat directory exist (as specified by -o or default from -i) "
         "then delete it and make a new one",
     )
     strongbias = base.traits.Bool(
@@ -103,7 +103,7 @@ class FSLAnatInputSpecBase(fsl.base.FSLCommandInputSpec):
         "setting)",
         xor=["strongbias"],
     )
-    nocrop = base.traits.Bool(
+    noreorient = base.traits.Bool(
         default_value=False,
         argstr="--noreorient",
         desc="turn off step that does reorientation 2 standard (fslreorient2std)",
