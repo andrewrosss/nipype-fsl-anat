@@ -81,11 +81,11 @@ This package exports two interfaces:
 
    - **`in_data = directory` + `clobber = False | undefined`**
 
-     `fsl_anat` execution is **SKIPPED**! Furthermore, if (in python) we have `fslanat = FSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified) and in this case **this node/interface becomes a no-op/pass-through node**.
+     `fsl_anat` execution is **SKIPPED**! Furthermore, if (in python) we have `fslanat = OptionalFSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified) and in this case **this node/interface becomes a no-op/pass-through node**.
 
    - **`in_data = directory` + `clobber = True`**
 
-     Equivalent to `fsl_anat -d <in_data> --clobber ...`. Furthermore, if (in python) we have `fslanat = FSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified).
+     Equivalent to `fsl_anat -d <in_data> --clobber ...`. Furthermore, if (in python) we have `fslanat = OptionalFSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified).
 
 ## Inputs
 
