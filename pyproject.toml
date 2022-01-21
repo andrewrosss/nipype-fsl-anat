@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nipype-fsl-anat"
-version = "1.0.0"
+version = "1.0.1"
 description = "Nipype interface(s) wrapping the `fsl_anat` command line tool"
 authors = ["Andrew Ross <andrew.ross.mail@gmail.com>"]
 

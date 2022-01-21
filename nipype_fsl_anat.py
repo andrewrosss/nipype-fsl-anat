@@ -37,7 +37,7 @@ from nipype.interfaces.base import isdefined
 from nipype.interfaces.base.core import RuntimeContext
 
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 NII_FILE_REGEXP = re.compile(r".*\.nii(\.gz)?$")
 FSL_ANAT_DIR_REGEXP = re.compile(r".*\.anat$")
