@@ -87,6 +87,88 @@ This package exports two interfaces:
 
      Equivalent to `fsl_anat -d <in_data> --clobber ...`. Furthermore, if (in python) we have `fslanat = FSLAnat(...)`, then this interface will have `fslanat.outputs.out_dir == in_data`, i.e. `out_dir_basename` is ignored (if specified).
 
+## Inputs
+
+- **`FSLAnat`**
+
+  | Interface intput/trait | CLI option             | Description                                                                        |
+  | :--------------------- | ---------------------- | ---------------------------------------------------------------------------------- |
+  | `in_file`              | `-i <strucural image>` | filename of input image (for one image only)                                       |
+  | `in_dir`               | `-d <anat dir>`        | directory name for existing .anat directory where this script will be run in place |
+
+- **`OptionalFSLAnat`**
+
+  | Interface intput/trait | CLI option | Description                                                                                                                              |
+  | :--------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+  | `in_data`              | -          | filename of input image (for one image only) **_OR_** directory name for existing .anat directory where this script will be run in place |
+
+- **Shared (both `FSLAnat` and `OptionalFSLAnat`)**
+
+  | Interface input/trait | CLI option              | Description                                                                                                  |
+  | :-------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+  | `out_dir_basename`    | `-o <output directory>` | basename of directory for output (default is input image basename followed by .anat)                         |
+  | `clobber`             | `--clobber`             | if .anat directory exist (as specified by -o or default from -i) then delete it and make a new one           |
+  | `strongbias`          | `--strongbias`          | used for images with very strong bias fields                                                                 |
+  | `weakbias`            | `--weakbias`            | used for images with smoother, more typical, bias fields (default setting)                                   |
+  | `noreorient`          | `--noreorient`          | turn off step that does reorientation 2 standard (fslreorient2std)                                           |
+  | `nocrop`              | `--nocrop`              | turn off step that does automated cropping (robustfov)                                                       |
+  | `nobias`              | `--nobias`              | turn off steps that do bias field correction (via FAST)                                                      |
+  | `noreg`               | `--noreg`               | turn off steps that do registration to standard (FLIRT and FNIRT)                                            |
+  | `nononlinreg`         | `--nononlinreg`         | turn off step that does non-linear registration (FNIRT)                                                      |
+  | `noseg`               | `--noseg`               | turn off step that does tissue-type segmentation (FAST)                                                      |
+  | `nosubcortseg`        | `--nosubcortseg`        | turn off step that does sub-cortical segmentation (FIRST)                                                    |
+  | `smoothing`           | `-s <value>`            | specify the value for bias field smoothing (the -l option in FAST)                                           |
+  | `image_type`          | `-t <type>`             | specify the type of image (choose one of T1 T2 PD - default is T1)                                           |
+  | `nosearch`            | `--nosearch`            | specify that linear registration uses the -nosearch option (FLIRT)                                           |
+  | `betfparam`           | `--betfparam`           | specify f parameter for BET (only used if not running non-linear reg and also wanting brain extraction done) |
+  | `nocleanup`           | `--nocleanup`           | do not remove intermediate files                                                                             |
+
+## Outputs
+
+- **Shared (both `FSLAnat` and `OptionalFSLAnat`)**
+
+  | Interface output/trait          | Filename                                                      |
+  | :------------------------------ | :------------------------------------------------------------ |
+  | `out_dir`                       | _The `.anat` directory into which fsl_anat wrote the outputs_ |
+  | `mni152_t1_2mm_brain_mask_dil1` | MNI152_T1_2mm_brain_mask_dil1.nii.gz                          |
+  | `mni_to_t1_nonlin_field`        | MNI_to_T1_nonlin_field.nii.gz                                 |
+  | `t1`                            | T1.nii.gz                                                     |
+  | `t12std_skullcon_mat`           | T12std_skullcon.mat                                           |
+  | `t1_biascorr`                   | T1_biascorr.nii.gz                                            |
+  | `t1_biascorr_bet_skull`         | T1_biascorr_bet_skull.nii.gz                                  |
+  | `t1_biascorr_brain`             | T1_biascorr_brain.nii.gz                                      |
+  | `t1_biascorr_brain_mask`        | T1_biascorr_brain_mask.nii.gz                                 |
+  | `t1_biascorr_to_std_sub_mat`    | T1_biascorr_to_std_sub.mat                                    |
+  | `t1_fast_bias`                  | T1_fast_bias.nii.gz                                           |
+  | `t1_fast_mixeltype`             | T1_fast_mixeltype.nii.gz                                      |
+  | `t1_fast_pve_0`                 | T1_fast_pve_0.nii.gz                                          |
+  | `t1_fast_pve_1`                 | T1_fast_pve_1.nii.gz                                          |
+  | `t1_fast_pve_2`                 | T1_fast_pve_2.nii.gz                                          |
+  | `t1_fast_pveseg`                | T1_fast_pveseg.nii.gz                                         |
+  | `t1_fast_restore`               | T1_fast_restore.nii.gz                                        |
+  | `t1_fast_seg`                   | T1_fast_seg.nii.gz                                            |
+  | `t1_fullfov`                    | T1_fullfov.nii.gz                                             |
+  | `t1_nonroi2roi_mat`             | T1_nonroi2roi.mat                                             |
+  | `t1_orig`                       | T1_orig.nii.gz                                                |
+  | `t1_orig2roi_mat`               | T1_orig2roi.mat                                               |
+  | `t1_orig2std_mat`               | T1_orig2std.mat                                               |
+  | `t1_roi_log`                    | T1_roi.log                                                    |
+  | `t1_roi2nonroi_mat`             | T1_roi2nonroi.mat                                             |
+  | `t1_roi2orig_mat`               | T1_roi2orig.mat                                               |
+  | `t1_std2orig_mat`               | T1_std2orig.mat                                               |
+  | `t1_subcort_seg`                | T1_subcort_seg.nii.gz                                         |
+  | `t1_to_mni_lin_mat`             | T1_to_MNI_lin.mat                                             |
+  | `t1_to_mni_lin`                 | T1_to_MNI_lin.nii.gz                                          |
+  | `t1_to_mni_nonlin`              | T1_to_MNI_nonlin.nii.gz                                       |
+  | `t1_to_mni_nonlin_txt`          | T1_to_MNI_nonlin.txt                                          |
+  | `t1_to_mni_nonlin_coeff`        | T1_to_MNI_nonlin_coeff.nii.gz                                 |
+  | `t1_to_mni_nonlin_field`        | T1_to_MNI_nonlin_field.nii.gz                                 |
+  | `t1_to_mni_nonlin_jac`          | T1_to_MNI_nonlin_jac.nii.gz                                   |
+  | `t1_vols_txt`                   | T1_vols.txt                                                   |
+  | `lesionmask`                    | lesionmask.nii.gz                                             |
+  | `lesionmaskinv`                 | lesionmaskinv.nii.gz                                          |
+  | `log_txt`                       | log.txt                                                       |
+
 ## Contributing
 
 1. Have or install a recent version of `poetry` (version >= 1.1)
